@@ -23,15 +23,17 @@ export default function Login() {
     }
 
     login(data);
-
-    // Redirect based on role
     navigate("/admin");
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-6">
-      <div className="bg-gray-900 p-10 rounded-xl border border-gray-800 w-full max-w-md">
-        <h1 className="text-3xl font-bold mb-6 text-center">Team Login</h1>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black px-6">
+
+      <div className="backdrop-blur-xl bg-white/10 border border-white/20 shadow-2xl p-10 rounded-2xl w-full max-w-md">
+        
+        <h1 className="text-4xl font-bold text-center text-white mb-6">
+          Team Login
+        </h1>
 
         {error && (
           <div className="text-red-400 bg-red-900/20 p-3 rounded mb-4 text-center">
@@ -39,10 +41,11 @@ export default function Login() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
 
           <input
-            className="px-4 py-3 bg-gray-800 rounded-lg border border-gray-700"
+            className="w-full bg-white/20 border border-white/30 px-4 py-3 rounded-lg 
+                       text-white placeholder-gray-300 backdrop-blur-md"
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
@@ -50,7 +53,8 @@ export default function Login() {
 
           <input
             type="password"
-            className="px-4 py-3 bg-gray-800 rounded-lg border border-gray-700"
+            className="w-full bg-white/20 border border-white/30 px-4 py-3 rounded-lg 
+                       text-white placeholder-gray-300 backdrop-blur-md"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -58,11 +62,13 @@ export default function Login() {
 
           <button
             type="submit"
-            className="px-6 py-3 bg-blue-600 hover:bg-blue-500 rounded-lg text-white font-semibold"
+            className="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-lg 
+                       font-semibold shadow-lg transition"
           >
             Login
           </button>
         </form>
+
       </div>
     </div>
   );

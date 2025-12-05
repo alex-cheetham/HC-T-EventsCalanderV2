@@ -3,16 +3,19 @@ import React, { createContext, useContext, useState } from "react";
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const stored = localStorage.getItem("user");
-
-  const [user, setUser] = useState(stored ? JSON.parse(stored) : null);
+  const [user, setUser] = useState(
+    localStorage.getItem("user")
+      ? JSON.parse(localStorage.getItem("user"))
+      : null
+  );
 
   const login = (data) => {
+    // Extract real backend fields
     const newUser = {
       id: data.user.id,
       username: data.user.username,
       role: data.user.role,
-      token: data.token,       // Keep token inside user object (Option A)
+      token: data.token
     };
 
     localStorage.setItem("user", JSON.stringify(newUser));

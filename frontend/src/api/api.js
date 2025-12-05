@@ -1,86 +1,60 @@
 import { API_URL } from "../config";
 
+// ------------------------------
+// TOKEN HELPER
+// ------------------------------
+function getToken() {
+  const user = localStorage.getItem("user");
+  if (!user) return null;
+  return JSON.parse(user).token;
+}
+
+// ------------------------------
+// GENERIC REQUEST HANDLER
+// ------------------------------
+async function request(path, method = "GET", body = null, auth = false) {
+  const headers = { "Content-Type": "application/json" };
+
+  if (auth) {
+    const token = getToken();
+    if (token) headers.Authorization = `Bearer ${token}`;
+  }
+
+  const res = await fetch(`${API_URL}${path}`, {
+    method,
+    headers,
+    body: body ? JSON.stringify(body) : null
+  });
+
+  return res.json();
+}
+
+// ------------------------------
+// API EXPORT
+// ------------------------------
 export const api = {
-  // ---- AUTH ----
-  login: async (username, password) => {
-    const res = await fetch(`${API_URL}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
-    });
-    return res.json();
-  },
+  // AUTH
+  login: (username, password) =>
+    request("/auth/login", "POST", { username, password }),
 
-  // ---- EVENTS ----
-  getEvents: async () => (await fetch(`${API_URL}/events`)).json(),
-  getEvent: async (id) => (await fetch(`${API_URL}/events/${id}`)).json(),
-  getFeaturedEvents: async () => (await fetch(`${API_URL}/events/featured/list`)).json(),
+  // EVENTS
+  getEvents: () => request("/events"),
+  getEvent: (id) => request(`/events/${id}`),
+  getFeaturedEvents: () => request("/events/featured/list"),
 
-  createEvent: async (token, data) => {
-    const res = await fetch(`${API_URL}/events`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify(data),
-    });
-    return res.json();
-  },
+  createEvent: (event) => request("/events", "POST", event, true),
+  updateEvent: (id, event) => request(`/events/${id}`, "PUT", event, true),
+  deleteEvent: (id) => request(`/events/${id}`, "DELETE", null, true),
 
-  updateEvent: async (token, id, data) => {
-    const res = await fetch(`${API_URL}/events/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
-    return res.json();
-  },
+  // SETTINGS (Owner & Dev)
+  getSettings: () => request("/settings"),
+  updateSettings: (settings) =>
+    request("/settings", "POST", settings, true),
 
-  deleteEvent: async (token, id) => {
-    const res = await fetch(`${API_URL}/events/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return res.json();
-  },
-
-  // ---- SETTINGS ----
-  getSettings: async () => (await fetch(`${API_URL}/settings`)).json(),
-  saveSettings: async (token, data) => {
-    const res = await fetch(`${API_URL}/settings`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
-    return res.json();
-  },
-
-  // ---- USERS ----
-  getUsers: async (token) =>
-    (await fetch(`${API_URL}/users`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })).json(),
-
-  createUser: async (token, data) =>
-    (await fetch(`${API_URL}/users/create`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    })).json(),
-
-  deleteUser: async (token, id) =>
-    (await fetch(`${API_URL}/users/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    })).json(),
+  // USER MANAGEMENT (Owner)
+  getUsers: () => request("/users", "GET", null, true),
+  createUser: (user) => request("/users/create", "POST", user, true),
+  updateUserRole: (id, role) =>
+    request(`/users/${id}/role`, "PUT", { role }, true),
+  deleteUser: (id) => request(`/users/${id}`, "DELETE", null, true),
 };
