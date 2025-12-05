@@ -16,6 +16,7 @@ import SettingsPage from "./pages/SettingsPage";
 import UserManagement from "./pages/UserManagement";
 import EventPage from "./pages/EventPage";
 import CalendarView from "./pages/CalendarView";
+import AdminAnalytics from "./pages/AdminAnalytics";
 
 function Layout({ children }) {
   const location = useLocation();
@@ -25,9 +26,7 @@ function Layout({ children }) {
     <>
       {!isAdmin && <NavBar />}
       {isAdmin && <AdminNavBar />}
-
       {children}
-
       {!isAdmin && <Footer />}
     </>
   );
@@ -52,6 +51,15 @@ export default function App() {
               element={
                 <PrivateRoute roles={["OWNER", "DEVELOPER", "EVENT_MANAGER"]}>
                   <AdminDashboard />
+                </PrivateRoute>
+              }
+            />
+
+            <Route
+              path="/admin/analytics"
+              element={
+                <PrivateRoute roles={["OWNER", "DEVELOPER"]}>
+                  <AdminAnalytics />
                 </PrivateRoute>
               }
             />

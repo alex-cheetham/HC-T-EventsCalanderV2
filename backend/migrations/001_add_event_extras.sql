@@ -1,0 +1,4 @@
+ALTER TABLE events ADD COLUMN tmp_link TEXT DEFAULT '';
+ALTER TABLE events ADD COLUMN route_map_url TEXT DEFAULT '';
+ALTER TABLE events ADD COLUMN public_slot TEXT DEFAULT '';
+ALTER TABLE events ADD COLUMN our_slot TEXT DEFAULT '';

@@ -30,10 +30,8 @@ export function requireRole(...roles) {
   };
 }
 
+// OWNER ONLY
+export const ownerOnly = requireRole("OWNER");
 
-export const ownerOnly = (req, res, next) => {
-    if (req.user.role !== "OWNER") {
-        return res.status(403).json({ error: "Owner access required" });
-    }
-    next();
-};
+// OWNER OR DEVELOPER
+export const devOnly = requireRole("OWNER", "DEVELOPER");

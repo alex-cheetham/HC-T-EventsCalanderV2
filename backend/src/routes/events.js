@@ -5,11 +5,12 @@ import { authRequired, requireRole } from "../middleware/auth.js";
 const router = express.Router();
 
 // -------------------------------------
-// GET ALL EVENTS (public + admin)
+// GET ALL EVENTS (Public + Admin)
 // -------------------------------------
 router.get("/", (req, res) => {
   const events = db.prepare(`
-      SELECT * FROM events ORDER BY event_date ASC, meetup_time ASC
+    SELECT * FROM events 
+    ORDER BY event_date ASC, meetup_time ASC
   `).all();
   res.json(events);
 });
@@ -19,9 +20,9 @@ router.get("/", (req, res) => {
 // -------------------------------------
 router.get("/featured/list", (req, res) => {
   const featured = db.prepare(`
-      SELECT * FROM events 
-      WHERE is_featured = 1
-      ORDER BY event_date ASC, meetup_time ASC
+    SELECT * FROM events 
+    WHERE is_featured = 1
+    ORDER BY event_date ASC, meetup_time ASC
   `).all();
   res.json(featured);
 });
@@ -38,7 +39,7 @@ router.get("/:id", (req, res) => {
 });
 
 // -------------------------------------
-// CREATE EVENT (Owner / Dev / Manager)
+// CREATE EVENT
 // -------------------------------------
 router.post(
   "/",
@@ -54,34 +55,42 @@ router.post(
       departure_time,
       banner_url,
       category,
-      is_featured
+      is_featured,
+
+      // NEW FIELDS
+      tmp_link,
+      route_map_url,
+      public_slot,
+      our_slot
     } = req.body;
 
-    // EVENT MANAGERS CANNOT FEATURE EVENTS
     const featuredValue =
       (req.user.role === "OWNER" || req.user.role === "DEVELOPER")
         ? (is_featured ? 1 : 0)
         : 0;
 
-    const result = db
-      .prepare(`
-        INSERT INTO events 
-        (title, description, location, event_date, meetup_time, departure_time,
-         banner_url, category, is_featured, created_by)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `)
-      .run(
-        title,
-        description,
-        location,
-        event_date,
-        meetup_time,
-        departure_time,
-        banner_url,
-        category ?? "General",
-        featuredValue,
-        req.user.id
-      );
+    const result = db.prepare(`
+      INSERT INTO events (
+        title, description, location, event_date, meetup_time, departure_time,
+        banner_url, category, is_featured, created_by,
+        tmp_link, route_map_url, public_slot, our_slot
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(
+      title,
+      description,
+      location,
+      event_date,
+      meetup_time,
+      departure_time,
+      banner_url,
+      category ?? "General",
+      featuredValue,
+      req.user.id,
+      tmp_link ?? "",
+      route_map_url ?? "",
+      public_slot ?? "",
+      our_slot ?? ""
+    );
 
     res.json({ success: true, id: result.lastInsertRowid });
   }
@@ -104,24 +113,29 @@ router.put(
       departure_time,
       banner_url,
       category,
-      is_featured
+      is_featured,
+
+      // NEW FIELDS
+      tmp_link,
+      route_map_url,
+      public_slot,
+      our_slot
     } = req.body;
 
-    // EVENT MANAGERS cannot mark featured
     const featuredValue =
       (req.user.role === "OWNER" || req.user.role === "DEVELOPER")
         ? (is_featured ? 1 : 0)
         : 0;
 
-    db.prepare(
-      `
+    db.prepare(`
       UPDATE events SET
-      title = ?, description = ?, location = ?, event_date = ?, 
-      meetup_time = ?, departure_time = ?, banner_url = ?,
-      category = ?, is_featured = ?, updated_at = CURRENT_TIMESTAMP
+        title = ?, description = ?, location = ?, event_date = ?,
+        meetup_time = ?, departure_time = ?, banner_url = ?,
+        category = ?, is_featured = ?, 
+        tmp_link = ?, route_map_url = ?, public_slot = ?, our_slot = ?,
+        updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
-    `
-    ).run(
+    `).run(
       title,
       description,
       location,
@@ -131,6 +145,10 @@ router.put(
       banner_url,
       category ?? "General",
       featuredValue,
+      tmp_link ?? "",
+      route_map_url ?? "",
+      public_slot ?? "",
+      our_slot ?? "",
       req.params.id
     );
 
@@ -139,7 +157,7 @@ router.put(
 );
 
 // -------------------------------------
-// DELETE EVENT (Owner / Developer ONLY)
+// DELETE EVENT
 // -------------------------------------
 router.delete(
   "/:id",

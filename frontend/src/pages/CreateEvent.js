@@ -14,7 +14,13 @@ export default function CreateEvent() {
     departure_time: "",
     banner_url: "",
     category: "Miscellaneous",
-    is_featured: false
+    is_featured: false,
+
+    // NEW FIELDS
+    tmp_link: "",
+    route_map_url: "",
+    public_slot: "",
+    our_slot: ""
   });
 
   const handleChange = (e) => {
@@ -40,7 +46,6 @@ export default function CreateEvent() {
 
   return (
     <div className="p-10 text-white max-w-4xl mx-auto">
-
       <h1 className="text-3xl font-bold mb-6">Create Event</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -68,6 +73,43 @@ export default function CreateEvent() {
           value={event.location}
           onChange={handleChange}
         />
+
+        {/* NEW FIELD: TMP LINK */}
+        <input
+          name="tmp_link"
+          placeholder="TruckersMP Event Link (Optional)"
+          className="w-full bg-gray-800 p-3 rounded"
+          value={event.tmp_link}
+          onChange={handleChange}
+        />
+
+        {/* NEW FIELD: ROUTE MAP */}
+        <input
+          name="route_map_url"
+          placeholder="Route Map Image URL"
+          className="w-full bg-gray-800 p-3 rounded"
+          value={event.route_map_url}
+          onChange={handleChange}
+        />
+
+        {/* NEW FIELDS: SLOTS */}
+        <div className="grid grid-cols-2 gap-6">
+          <input
+            name="public_slot"
+            placeholder="Public Slot (Optional)"
+            className="bg-gray-800 p-3 rounded w-full"
+            value={event.public_slot}
+            onChange={handleChange}
+          />
+
+          <input
+            name="our_slot"
+            placeholder="Our VTC Slot"
+            className="bg-gray-800 p-3 rounded w-full"
+            value={event.our_slot}
+            onChange={handleChange}
+          />
+        </div>
 
         <div className="grid grid-cols-2 gap-6">
           <div>

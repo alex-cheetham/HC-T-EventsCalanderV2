@@ -25,6 +25,13 @@ export default function AdminNavBar() {
 
           <Link to="/admin" className="hover:text-blue-400">Dashboard</Link>
 
+          {/* New Analytics Tab */}
+          {(isOwner || isDev) && (
+            <Link to="/admin/analytics" className="hover:text-blue-400">
+              Analytics
+            </Link>
+          )}
+
           {(isOwner || isDev) && (
             <Link to="/admin/settings" className="hover:text-blue-400">Settings</Link>
           )}

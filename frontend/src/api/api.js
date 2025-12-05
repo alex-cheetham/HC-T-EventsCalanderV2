@@ -41,20 +41,30 @@ export const api = {
   getEvents: () => request("/events"),
   getEvent: (id) => request(`/events/${id}`),
   getFeaturedEvents: () => request("/events/featured/list"),
-
   createEvent: (event) => request("/events", "POST", event, true),
   updateEvent: (id, event) => request(`/events/${id}`, "PUT", event, true),
   deleteEvent: (id) => request(`/events/${id}`, "DELETE", null, true),
 
-  // SETTINGS (Owner & Dev)
+  // SETTINGS (Owner & Dev only)
   getSettings: () => request("/settings"),
   updateSettings: (settings) =>
     request("/settings", "POST", settings, true),
 
-  // USER MANAGEMENT (Owner)
+  // USERS (Owner)
   getUsers: () => request("/users", "GET", null, true),
   createUser: (user) => request("/users/create", "POST", user, true),
   updateUserRole: (id, role) =>
     request(`/users/${id}/role`, "PUT", { role }, true),
   deleteUser: (id) => request(`/users/${id}`, "DELETE", null, true),
+
+  // ANALYTICS (Owner & Developer)
+  analytics: {
+    kpi: () => request("/analytics/kpi", "GET", null, true),
+    eventsPerMonth: () =>
+      request("/analytics/events-per-month", "GET", null, true),
+    categoryDistribution: () =>
+      request("/analytics/category-distribution", "GET", null, true),
+    featuredBreakdown: () =>
+      request("/analytics/featured-breakdown", "GET", null, true),
+  },
 };

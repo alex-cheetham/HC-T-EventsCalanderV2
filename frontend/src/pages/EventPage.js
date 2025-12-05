@@ -33,7 +33,7 @@ export default function EventPage() {
       {/* Content */}
       <div className="max-w-5xl mx-auto px-6 mt-10">
         
-        {/* Category Badge */}
+        {/* Category */}
         <span className="px-4 py-1 bg-blue-600 text-xs rounded-lg uppercase tracking-wide inline-block mb-4">
           {event.category}
         </span>
@@ -41,18 +41,33 @@ export default function EventPage() {
         {/* Title */}
         <h1 className="text-4xl font-extrabold mb-4">{event.title}</h1>
 
-        {/* Event Date */}
+        {/* Date + Times */}
         <p className="text-gray-400 text-lg mb-2">
           <strong className="text-gray-300">Event Date:</strong>{" "}
           {new Date(event.event_date).toLocaleDateString()}
         </p>
 
-        {/* Meetup / Departure */}
-        <p className="text-gray-400 text-lg mb-6">
-          <strong className="text-gray-300">Meetup:</strong> {event.meetup_time}  
+        <p className="text-gray-400 text-lg mb-4">
+          <strong className="text-gray-300">Meetup:</strong> {event.meetup_time}
           {" • "}
-          <strong className="text-gray-300">Departure:</strong> {event.departure_time}
+          <strong className="text-gray-300">Departure:</strong>{" "}
+          {event.departure_time}
         </p>
+
+        {/* Slot Pills */}
+        <div className="flex flex-wrap gap-4 mb-6">
+          {event.our_slot && (
+            <span className="px-4 py-2 bg-green-600/80 text-md rounded-lg shadow">
+              Our Slot: {event.our_slot}
+            </span>
+          )}
+
+          {event.public_slot && (
+            <span className="px-4 py-2 bg-blue-600/80 text-md rounded-lg shadow">
+              Public Slot: {event.public_slot}
+            </span>
+          )}
+        </div>
 
         {/* Description */}
         <div className="prose prose-invert max-w-none mb-10">
@@ -60,6 +75,18 @@ export default function EventPage() {
             {event.description}
           </p>
         </div>
+
+        {/* Route Map */}
+        {event.route_map_url && (
+          <div className="mb-12">
+            <h2 className="text-2xl font-bold mb-3">Route Map</h2>
+            <img
+              src={event.route_map_url}
+              alt="Route Map"
+              className="w-full rounded-xl border border-gray-800 shadow-xl"
+            />
+          </div>
+        )}
 
         {/* Buttons */}
         <div className="flex flex-wrap gap-4">
@@ -73,26 +100,29 @@ export default function EventPage() {
             Add to Calendar
           </a>
 
-          {/* Share Button (Optional) */}
-          <button
-            onClick={() => navigator.share && navigator.share({
-              title: event.title,
-              text: "Check out this event!",
-              url: window.location.href
-            })}
-            className="px-5 py-3 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg transition"
-          >
-            Share Event
-          </button>
+          {/* TMP Page */}
+          {event.tmp_link && (
+            <a
+              href={event.tmp_link}
+              target="_blank"
+              rel="noreferrer"
+              className="px-5 py-3 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg transition flex items-center gap-2"
+            >
+              <img
+                src="https://static.truckersmp.com/images/favicon.png"
+                className="h-5 w-5"
+                alt="TMP"
+              />
+              View on TMP
+            </a>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-// ---------------------------
-// ICS CALENDAR FILE GENERATOR
-// ---------------------------
+/* ICS Generator */
 function generateICS(event) {
   const dateFormatted = event.event_date.replace(/-/g, "");
 
